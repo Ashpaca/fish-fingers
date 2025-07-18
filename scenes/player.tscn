@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://ba532rw631gcg"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_tp5iu"]
+[ext_resource type="Script" path="res://scenes/movement_zone.gd" id="2_kflwm"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2sn5x"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_s6e3h"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_cu5i3"]
+radius = 7.0
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_tp5iu")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 2.0
+path_postprocessing = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_2sn5x")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_s6e3h")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.871359, 0.490645, 0, -0.490645, 0.871359, 0, 2.38238, 2.39776)
+
+[node name="MovementZone" type="Area3D" parent="."]
+collision_layer = 32768
+collision_mask = 32768
+script = ExtResource("2_kflwm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MovementZone"]
+shape = SubResource("SphereShape3D_cu5i3")
+
+[connection signal="target_found" from="MovementZone" to="." method="_on_movement_zone_target_found"]
+[connection signal="target_lost" from="MovementZone" to="." method="_on_movement_zone_target_lost"]

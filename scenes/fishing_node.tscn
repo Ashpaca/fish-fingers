@@ -1,14 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://dpwl7gtywvg3i"]
+[gd_scene load_steps=3 format=3 uid="uid://bxl5td38voos3"]
 
-[ext_resource type="Script" path="res://scripts/target_node_text.gd" id="1_b16yr"]
+[ext_resource type="Script" path="res://scripts/fishing_node.gd" id="1_5ipo0"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3153k"]
 radius = 0.2
 
-[node name="TargetNodeText" type="Area3D"]
+[node name="FishingNode" type="Area3D"]
 collision_layer = 32768
 collision_mask = 32768
-script = ExtResource("1_b16yr")
+script = ExtResource("1_5ipo0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_3153k")

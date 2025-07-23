@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dscf8ceavduac"]
 
-[ext_resource type="Script" path="res://scenes/typing_agent.gd" id="1_vvbfq"]
+[ext_resource type="Script" path="res://scripts/typing_agent.gd" id="1_vvbfq"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xowyg"]
 font_size = 32

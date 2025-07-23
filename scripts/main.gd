@@ -2,6 +2,9 @@ extends Node3D
 
 const ALL_CHARACTERS : String = "qwertyuiopasdfghjklzxcvbnm"
 const MOVE_TEXT_LENGTH : int = 3
+const MOVE_STATE : int = 1
+const LURE_STATE : int = 2
+const REEL_STATE : int = 3
 
 @onready var player : Player = $Player
 @onready var targetNodes : GridMap = $MovementMap
@@ -10,6 +13,8 @@ var targetNodeTextScene : PackedScene = load("res://scenes/target_node_text.tscn
 
 var targetNodePositions : Array[Vector3]
 var targetNodesTextList : Array[TargetNodeText]
+
+var currentState = 1
 
 func _ready() -> void:
 	for cell in targetNodes.get_used_cells():
@@ -38,12 +43,28 @@ func add_text_nodes():
 			label.text += ALL_CHARACTERS[randi_range(0, ALL_CHARACTERS.length() - 1)]
 
 
-func _physics_process(delta: float) -> void:
-	check_for_word_matches()
+
+func _on_typing_agent_letter_typed() -> void:
+	match currentState:
+		MOVE_STATE:
+			if len(typingAgent.textDisplay.text) < 1:
+				return
+			if player.find_partial_match(typingAgent.textDisplay.text):
+				typingAgent.set_text_color("white")
+			else:
+				typingAgent.set_text_color("red")
+	
+			if player.find_word_match(typingAgent.textDisplay.text):
+				typingAgent.clear_text_display()
+		
+		LURE_STATE:
+			if Input.is_action_just_pressed("ui_cancel"):
+				player.stop_fishing_camera()
+				currentState = MOVE_STATE
+		
+		REEL_STATE:
+			pass
 
 
-func check_for_word_matches():
-	for target in player.targetNodeList:
-		if target.textBox.text == typingAgent.textDisplay.text:
-			typingAgent.textDisplay.text = ""
-			player.navAgent.target_position = target.global_position
+func _on_player_start_fishing(node : FishingNode) -> void:
+	currentState = LURE_STATE

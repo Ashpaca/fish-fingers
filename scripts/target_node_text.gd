@@ -7,12 +7,12 @@ func _ready() -> void:
 
 
 func _on_area_entered(area: Area3D) -> void:
-	if area.name == "MovementZone":
+	if area.name == "ActiveNodeZone":
 		textBox.visible = true
-		area.emit_signal("target_found", self)
+		area.found(self)
 
 
 func _on_area_exited(area: Area3D) -> void:
-	if area.name == "MovementZone":
+	if area.name == "ActiveNodeZone":
 		textBox.visible = false
-		area.emit_signal("target_lost", self)
+		area.lost(self)

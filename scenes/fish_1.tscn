@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://d14a5xijaxh0a"]
+
+[ext_resource type="Script" path="res://scripts/fish.gd" id="1_hfe8k"]
+[ext_resource type="ArrayMesh" uid="uid://bymiaoopw2vey" path="res://glb/fish1.res" id="2_wjlnp"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rjk2b"]
+radius = 0.3
+height = 1.0
+
+[node name="Fish1" type="CharacterBody3D"]
+motion_mode = 1
+script = ExtResource("1_hfe8k")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_postprocessing = 1
+avoidance_enabled = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0.0102333)
+shape = SubResource("CapsuleShape3D_rjk2b")
+
+[node name="FishMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, -1.31134e-08, 0.3, 0, -0.3, -1.31134e-08, 0, 0, 0)
+mesh = ExtResource("2_wjlnp")
+skeleton = NodePath("../NavigationAgent3D")
+
+[node name="Label3D" type="Label3D" parent="FishMesh"]
+transform = Transform3D(3.33333, 0, 0, 0, -1.45704e-07, -3.33333, 0, 3.33333, -1.45704e-07, 0, -3.812e-08, 0.872086)
+billboard = 1
+no_depth_test = true
+text = "E"
+font_size = 96
+outline_size = 48

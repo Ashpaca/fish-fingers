@@ -2,21 +2,26 @@ class_name Player extends CharacterBody3D
 
 const SPEED = 2.5
 const ROTATE_SPEED = 0.03
+const LERP_TO_FISH_SPEED : float = 1
+const LERP_TO_MOVE_SPEED : float = 5
 
 signal start_fishing(node : FishingNode)
 
 @onready var navAgent : NavigationAgent3D = $NavigationAgent3D
 @onready var playerModel : Node3D = $Cat
+@onready var playerAnimator : AnimationPlayer = $Cat/AnimationPlayer
 @onready var cameraPivot : Node3D = $CameraPivot
 
 var rotateLeft : bool = false
 var rotateRight : bool = false
 var rotationGoal : float = 0.0
 var lastSavedCameraRotation : Vector3 = Vector3.ZERO
+var cameraLerpSpeed : float = LERP_TO_FISH_SPEED
 var targetNodeList : Array[TargetNodeText]
 
 func _ready() -> void:
 	navAgent.target_position = global_position
+	playerAnimator.play("cat walk")
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -32,6 +37,10 @@ func _physics_process(delta: float) -> void:
 		move_to_location()
 	else:
 		velocity = velocity.y * Vector3.UP
+		if playerAnimator.current_animation == "cat walk":
+			playerAnimator.call_deferred("pause")
+	
+	cameraPivot.position = cameraPivot.position.lerp(Vector3.ZERO, cameraLerpSpeed * delta)
 	
 	rotate_player_model(delta)
 	move_and_slide()
@@ -66,8 +75,10 @@ func find_word_match(typedString : String) -> bool:
 			if target is FishingNode:
 				start_fishing.emit(target)
 				start_fishing_camera(target)
+				playerAnimator.play("cat lazy idle")
 			else:
 				navAgent.target_position = target.global_position
+				playerAnimator.play("cat walk")
 			return true
 	return false
 
@@ -91,14 +102,14 @@ func start_fishing_camera(node : FishingNode) -> void:
 	lastSavedCameraRotation = cameraPivot.rotation
 	cameraPivot.rotation = node.cameraRotation
 	cameraPivot.reparent(node)
-	cameraPivot.position = Vector3.ZERO
+	cameraLerpSpeed = LERP_TO_FISH_SPEED
 	for target in targetNodeList:
 		target.textBox.visible = false
 	
 	
 func stop_fishing_camera() -> void:
 	cameraPivot.reparent(self)
-	cameraPivot.position = Vector3.ZERO
+	cameraLerpSpeed = LERP_TO_MOVE_SPEED
 	cameraPivot.rotation = lastSavedCameraRotation
 	for target in targetNodeList:
 		target.textBox.visible = true

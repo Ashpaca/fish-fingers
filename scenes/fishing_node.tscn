@@ -16,7 +16,7 @@ shape = SubResource("SphereShape3D_3153k")
 [node name="Label3D" type="Label3D" parent="."]
 billboard = 1
 no_depth_test = true
-text = "###"
+text = "start fishing"
 font_size = 64
 outline_size = 32
 

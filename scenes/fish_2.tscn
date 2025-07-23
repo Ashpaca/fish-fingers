@@ -1,11 +1,83 @@
-[gd_scene load_steps=4 format=3 uid="uid://dtuvyws50scx6"]
+[gd_scene load_steps=15 format=3 uid="uid://dtuvyws50scx6"]
 
 [ext_resource type="Script" path="res://scripts/fish.gd" id="1_0hnvv"]
 [ext_resource type="ArrayMesh" uid="uid://ds47erg7mr5p3" path="res://glb/fish2.res" id="1_spvsg"]
+[ext_resource type="Texture2D" uid="uid://gsybvggnne60" path="res://bubble_pop.png" id="3_q8ml0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rjk2b"]
 radius = 0.25
 height = 1.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sk6t4"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i5nwu"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hvmy4"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kwk7n"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fh328"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fkl6i"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3mpv"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3wtm"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_027g8"]
+atlas = ExtResource("3_q8ml0")
+region = Rect2(22, 5, 1, 1)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qgmou"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sk6t4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i5nwu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hvmy4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kwk7n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fh328")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fkl6i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g3mpv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g3wtm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_027g8")
+}],
+"loop": false,
+"name": &"new_animation",
+"speed": 5.0
+}]
 
 [node name="Fish2" type="CharacterBody3D"]
 motion_mode = 1
@@ -25,9 +97,22 @@ mesh = ExtResource("1_spvsg")
 skeleton = NodePath("../NavigationAgent3D")
 
 [node name="Label3D" type="Label3D" parent="FishMesh"]
-transform = Transform3D(3.33333, 0, 0, 0, -1.45704e-07, -3.33333, 0, 3.33333, -1.45704e-07, 0, -3.812e-08, 0.872086)
+transform = Transform3D(3.33333, 0, 0, 0, -1.45704e-07, -3.33333, 0, 3.33333, -1.45704e-07, 0, 0, 0.875)
 billboard = 1
 no_depth_test = true
 text = "E"
 font_size = 96
 outline_size = 48
+
+[node name="BubbleSprite" type="AnimatedSprite3D" parent="FishMesh"]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0.875)
+modulate = Color(1, 1, 1, 0.509804)
+billboard = 1
+no_depth_test = true
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_qgmou")
+animation = &"new_animation"
+frame = 8
+frame_progress = 1.0
+
+[connection signal="frame_changed" from="FishMesh/BubbleSprite" to="." method="_on_bubble_sprite_frame_changed"]

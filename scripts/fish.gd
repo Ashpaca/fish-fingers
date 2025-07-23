@@ -33,3 +33,7 @@ func rotate_fish_model(delta : float) -> void:
 	var max_angle = PI * 2
 	var difference = fmod(rotationGoal - rotation.y, max_angle)
 	rotation.y = rotation.y + (fmod(2 * difference, max_angle) - difference) * delta * 3
+
+
+func _on_bubble_sprite_frame_changed() -> void:
+	pass # Replace with function body.

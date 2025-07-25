@@ -15,7 +15,6 @@ static var ALL_WORDS_LENGTH_7 : Array[String]
 @onready var player : Player = $Player
 @onready var targetNodes : GridMap = $MovementMap
 @onready var typingAgent : TypingAgent = $TypingAgent
-@onready var sfx_catch_fish: AudioStreamPlayer3D = $SFXCatchFish
 
 var targetNodeTextScene : PackedScene = load("res://scenes/target_node_text.tscn")
 var targetNodePositions : Array[Vector3]
@@ -56,7 +55,7 @@ func add_text_nodes():
 		get_tree().root.add_child(targetNodeTextInstance)
 		targetNodesTextList.append(targetNodeTextInstance)
 		targetNodeTextInstance.global_position = targetNodePositions[i]
-		var label : Label3D = targetNodeTextInstance.textBox
+		var label : RichLabel3D = targetNodeTextInstance.textBox
 		var usedWords : Array[String]
 		for j in range(i - 1, -1, -1):
 			if (targetNodesTextList[j].global_position - targetNodeTextInstance.global_position).length_squared() < 144:
@@ -70,14 +69,8 @@ func add_text_nodes():
 func _on_typing_agent_letter_typed() -> void:
 	match currentState:
 		MOVE_STATE:
-			if len(typingAgent.textDisplay.text) < 1:
-				return
-			if player.find_partial_match(typingAgent.textDisplay.text):
-				typingAgent.set_text_color("white")
-			else:
-				typingAgent.set_text_color("red")
-	
-			if player.find_word_match(typingAgent.textDisplay.text):
+			typingAgent.set_matching_letters(player.find_partial_match(typingAgent.get_text()))
+			if player.find_word_match(typingAgent.get_text()):
 				typingAgent.clear_text_display()
 		
 		LURE_STATE:
@@ -86,11 +79,11 @@ func _on_typing_agent_letter_typed() -> void:
 				typingAgent.clear_text_display()
 				currentState = MOVE_STATE
 				currentFishingNode.stop_luring()
-			if len(typingAgent.textDisplay.text) < 1:
+			if len(typingAgent.get_text()) < 1:
 				return
-			if len(typingAgent.textDisplay.text) > 1:
-				typingAgent.textDisplay.text = typingAgent.textDisplay.text[0]
-			if currentFishingNode.find_fish_QTE(typingAgent.textDisplay.text):
+			if len(typingAgent.get_text()) > 1:
+				typingAgent.set_text(typingAgent.get_text()[0])
+			if currentFishingNode.find_fish_QTE(typingAgent.get_text()):
 				start_reel_state(currentFishingNode.allActiveFish[currentFishingNode.currentFishID])
 			typingAgent.clear_text_display()
 		
@@ -98,13 +91,10 @@ func _on_typing_agent_letter_typed() -> void:
 			if Input.is_action_just_pressed("menu_exit"):
 				cancel_reel_state()
 				
-			if len(typingAgent.textDisplay.text) < 1:
+			if len(typingAgent.get_text()) < 1:
 				return
-			if currentFish.find_partial_match(typingAgent.textDisplay.text):
-				typingAgent.set_text_color("white")
-			else:
-				typingAgent.set_text_color("red")
-			if currentFish.find_word_match(typingAgent.textDisplay.text):
+			typingAgent.set_matching_letters(currentFish.find_partial_match(typingAgent.get_text()))
+			if currentFish.find_word_match(typingAgent.get_text()):
 				typingAgent.clear_text_display()
 			
 			if currentFish.has_no_words():
@@ -135,9 +125,8 @@ func _on_fishing_node_a_fish_escaped() -> void:
 
 
 func handle_caught_fish() -> void:
-	currentFishingNode.remove_fish(currentFish)
+	currentFishingNode.catch_and_remove_fish(currentFish)
 	player.return_to_fishing_camera(currentFishingNode)
 	currentFishingNode.start_luring()
 	typingAgent.clear_text_display()
 	currentState = LURE_STATE
-	sfx_catch_fish.play(0.4)

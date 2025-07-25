@@ -1,25 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://dscf8ceavduac"]
+[gd_scene load_steps=2 format=3 uid="uid://dscf8ceavduac"]
 
 [ext_resource type="Script" path="res://scripts/typing_agent.gd" id="1_vvbfq"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_xowyg"]
-font_size = 32
-outline_size = 20
-outline_color = Color(0, 0, 0, 1)
 
 [node name="TypingAgent" type="Node2D"]
 script = ExtResource("1_vvbfq")
 
-[node name="Label" type="Label" parent="."]
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 400.0
+offset_top = 10.0
 offset_right = 880.0
-offset_bottom = 60.0
+offset_bottom = 70.0
 grow_horizontal = 2
 grow_vertical = 2
+bbcode_enabled = true
 text = "test words"
-label_settings = SubResource("LabelSettings_xowyg")
-horizontal_alignment = 1
-vertical_alignment = 1

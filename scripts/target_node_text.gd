@@ -1,6 +1,6 @@
 class_name TargetNodeText extends Area3D
 
-@onready var textBox : Label3D = $Label3D
+@onready var textBox : RichLabel3D = $RichLabel3D
 
 func _ready() -> void:
 	textBox.visible = false

@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://dbmhkjqph6px6"]
+
+[ext_resource type="Script" path="res://rich_label_3d.gd" id="1_esqwd"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_gkmjh"]
+viewport_path = NodePath("SubViewport")
+
+[node name="RichLabel3D" type="Sprite3D"]
+pixel_size = 0.005
+billboard = 1
+no_depth_test = true
+texture = SubResource("ViewportTexture_gkmjh")
+script = ExtResource("1_esqwd")
+labelWidth = 500
+labelHeight = 100
+fontSize = 64
+outlineSize = 32
+text = "hi"
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(500, 100)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[center][outline_size=32][font_size=64][color=gray]h[/color][color=gray]i[/color][/font_size][/outline_size][/center]"

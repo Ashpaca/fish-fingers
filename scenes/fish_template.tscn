@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://2usj0bol3m53"]
+[gd_scene load_steps=18 format=3 uid="uid://2usj0bol3m53"]
 
 [ext_resource type="Script" path="res://scripts/fish.gd" id="1_w2oih"]
 [ext_resource type="Texture2D" uid="uid://gsybvggnne60" path="res://bubble_pop.png" id="3_h4t4r"]
 [ext_resource type="PackedScene" uid="uid://d14a5xijaxh0a" path="res://scenes/fish_types/fish_1.tscn" id="3_lstq2"]
 [ext_resource type="AudioStream" uid="uid://cv2j7drps4apc" path="res://sounds/Dropping tiny pebble in still water surface by jorickhoofd -- httpsfreesound.orgs160119 -- License Attribution 4.0.wav" id="4_lw8p6"]
+[ext_resource type="PackedScene" uid="uid://dbmhkjqph6px6" path="res://scenes/rich_label_3d.tscn" id="4_x1nm0"]
 [ext_resource type="AudioStream" uid="uid://gu3yqhhjlthl" path="res://sounds/fish_splashing.wav" id="5_xicmx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sk6t4"]
@@ -77,6 +78,9 @@ animations = [{
 "speed": 3.0
 }]
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_c0ggv"]
+viewport_path = NodePath("SubViewport")
+
 [node name="FishTemplate" type="CharacterBody3D"]
 motion_mode = 1
 script = ExtResource("1_w2oih")
@@ -92,6 +96,7 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -1.
 visible = false
 billboard = 1
 no_depth_test = true
+modulate = Color(0.745098, 0.745098, 0.745098, 1)
 text = "E"
 font_size = 96
 outline_size = 48
@@ -105,15 +110,9 @@ texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_qgmou")
 animation = &"QTE"
 
-[node name="ReelingText" type="Label3D" parent="FishCollider"]
-visible = false
-billboard = 1
-no_depth_test = true
-text = "because
-big
-words"
-font_size = 64
-outline_size = 32
+[node name="ReelingText" parent="FishCollider" instance=ExtResource("4_x1nm0")]
+texture = SubResource("ViewportTexture_c0ggv")
+labelHeight = 300
 
 [node name="SFXDrop" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_lw8p6")

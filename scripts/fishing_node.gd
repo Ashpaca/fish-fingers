@@ -7,6 +7,8 @@ signal a_fish_escaped
 
 @export var cameraRotation : Vector3
 
+@onready var sfx_catch_fish: AudioStreamPlayer3D = $SFXCatchFish
+
 var allActiveFish : Array[Fish]
 var isLuring : bool = false
 var biteTimer : float = 0
@@ -64,6 +66,11 @@ func on_fish_QTE_end(success : bool) -> void:
 
 func on_fish_escaped() -> void:
 	a_fish_escaped.emit()
+
+
+func catch_and_remove_fish(fish : Fish) -> void:
+	sfx_catch_fish.play(0.4)
+	remove_fish(fish)
 
 
 func remove_fish(fish : Fish) -> void:

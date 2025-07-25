@@ -69,13 +69,18 @@ func move_to_location():
 	velocity = direction * SPEED
 
 
-func find_partial_match(typedString : String) -> bool:
+func find_partial_match(typedString : String) -> int:
 	for target in targetNodeList:
-		if target.textBox.text.find(typedString) == 0:
-			var direction : Vector3 = (target.global_position - global_position).normalized()
-			rotationGoal = atan2(direction.x, direction.z)
-			return true
-	return false
+		target.textBox.matched_letters(0, 0)
+	
+	for i in range(len(typedString), 0, -1):
+		for target in targetNodeList:
+			if target.textBox.text.find(typedString.substr(0, i)) == 0:
+				var direction : Vector3 = (target.global_position - global_position).normalized()
+				rotationGoal = atan2(direction.x, direction.z)
+				target.textBox.matched_letters(i, len(typedString))
+				return i
+	return 0
 
 
 func find_word_match(typedString : String) -> bool:

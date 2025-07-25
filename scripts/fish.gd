@@ -16,7 +16,7 @@ const FISH_ESCAPE_TIME : float = 4.0
 @onready var fishModel : CollisionShape3D = $FishCollider
 @onready var lureLabel : Label3D = $FishCollider/LuringText
 @onready var bubbleQTE : AnimatedSprite3D = $FishCollider/LuringText/BubbleSprite
-@onready var reelLabel : Label3D = $FishCollider/ReelingText
+@onready var reelLabel : RichLabel3D = $FishCollider/ReelingText
 @onready var sfx_drop: AudioStreamPlayer3D = $SFXDrop
 @onready var sfx_wiggle: AudioStreamPlayer3D = $SFXWiggle
 
@@ -48,7 +48,7 @@ func _physics_process(delta: float) -> void:
 			sfx_wiggle.stop()
 			return
 		if reelingTimer > TIME_TO_REEL_TIME:
-			rotate_y(6 * delta * (reelingTimer - floorf(reelingTimer) - .5))
+			rotate_y(0.1 * sin(reelingTimer * 10))
 			if not sfx_wiggle.playing:
 				sfx_wiggle.play(3.0)
 			return
@@ -82,6 +82,14 @@ func _physics_process(delta: float) -> void:
 	
 	rotate_fish_model(delta)
 	move_and_slide()
+
+
+func _process(delta: float) -> void:
+	setup_text()
+
+
+func setup_text() -> void:
+	pass
 
 
 func rotate_fish_model(delta : float) -> void:
@@ -132,13 +140,19 @@ func start_reel_typing(playerLocation : Vector3) -> void:
 func cancel_reel_typing() -> void:
 	reeling = false
 	reelLabel.visible = false
+	reelLabel.matched_letters(0, 0)
 
 
-func find_partial_match(typedString : String) -> bool:
-	for word in words:
-		if word.find(typedString) == 0:
-			return true
-	return false
+func find_partial_match(typedString : String) -> int:
+	for i in range(len(typedString), 0, -1):
+		for w in range(len(words)):
+			if words[w].find(typedString.substr(0, i)) == 0:
+				var lettersToSkip = 0
+				for m in range(0, w):
+					lettersToSkip += len(words[m]) + 1
+				reelLabel.matched_letters(i, len(typedString), lettersToSkip)
+				return i
+	return 0
 
 
 

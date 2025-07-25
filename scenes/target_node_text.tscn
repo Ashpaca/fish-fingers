@@ -1,9 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://dpwl7gtywvg3i"]
+[gd_scene load_steps=5 format=3 uid="uid://dpwl7gtywvg3i"]
 
 [ext_resource type="Script" path="res://scripts/target_node_text.gd" id="1_b16yr"]
+[ext_resource type="PackedScene" uid="uid://dbmhkjqph6px6" path="res://scenes/rich_label_3d.tscn" id="2_wck1a"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3153k"]
 radius = 0.2
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_lk7o4"]
+viewport_path = NodePath("SubViewport")
 
 [node name="TargetNodeText" type="Area3D"]
 collision_layer = 32768
@@ -13,12 +17,9 @@ script = ExtResource("1_b16yr")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_3153k")
 
-[node name="Label3D" type="Label3D" parent="."]
-billboard = 1
-no_depth_test = true
-text = "###"
-font_size = 64
-outline_size = 32
+[node name="RichLabel3D" parent="." instance=ExtResource("2_wck1a")]
+texture = SubResource("ViewportTexture_lk7o4")
+text = "fox"
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="area_exited" from="." to="." method="_on_area_exited"]

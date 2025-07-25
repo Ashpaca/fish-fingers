@@ -37,6 +37,14 @@ shape = SubResource("SphereShape3D_cu5i3")
 [node name="Cat" parent="." instance=ExtResource("3_7fl0h")]
 transform = Transform3D(-0.2, 0, -1.74846e-08, 0, 0.2, 0, 1.74846e-08, 0, -0.2, 0, -1, 2.38419e-07)
 
+[node name="SpotLight3D" type="SpotLight3D" parent="Cat"]
+transform = Transform3D(-1, 0, 1.50996e-07, 0, 1, 0, -1.50996e-07, 0, -1, 2.58029e-07, 10.6782, -2.95151)
+visible = false
+light_color = Color(0.946643, 0.94213, 7.70092e-07, 1)
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 12.473
+
 [node name="CameraPivot" type="Node3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 

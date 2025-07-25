@@ -9,12 +9,14 @@ const REEL_STATE : int = 3
 @onready var player : Player = $Player
 @onready var targetNodes : GridMap = $MovementMap
 @onready var typingAgent : TypingAgent = $TypingAgent
-var targetNodeTextScene : PackedScene = load("res://scenes/target_node_text.tscn")
 
+var targetNodeTextScene : PackedScene = load("res://scenes/target_node_text.tscn")
 var targetNodePositions : Array[Vector3]
 var targetNodesTextList : Array[TargetNodeText]
+var currentFishingNode : FishingNode
+var currentFish : Fish
 
-var currentState = 1
+var currentState = MOVE_STATE
 
 func _ready() -> void:
 	for cell in targetNodes.get_used_cells():
@@ -58,13 +60,52 @@ func _on_typing_agent_letter_typed() -> void:
 				typingAgent.clear_text_display()
 		
 		LURE_STATE:
-			if Input.is_action_just_pressed("ui_cancel"):
+			if Input.is_action_just_pressed("menu_exit"):
 				player.stop_fishing_camera()
+				typingAgent.clear_text_display()
 				currentState = MOVE_STATE
+				currentFishingNode.stop_luring()
+			if len(typingAgent.textDisplay.text) < 1:
+				return
+			if len(typingAgent.textDisplay.text) > 1:
+				typingAgent.textDisplay.text = typingAgent.textDisplay.text[0]
+			if currentFishingNode.find_fish_QTE(typingAgent.textDisplay.text):
+				start_reel_state(currentFishingNode.allActiveFish[currentFishingNode.currentFishID])
+			typingAgent.clear_text_display()
 		
 		REEL_STATE:
-			pass
-
+			if Input.is_action_just_pressed("menu_exit"):
+				player.return_to_fishing_camera(currentFishingNode)
+				currentFishingNode.start_luring()
+				currentFish.cancel_reel_typing()
+				typingAgent.clear_text_display()
+				currentState = LURE_STATE
+				
+			if len(typingAgent.textDisplay.text) < 1:
+				return
+			if currentFish.find_partial_match(typingAgent.textDisplay.text):
+				typingAgent.set_text_color("white")
+			else:
+				typingAgent.set_text_color("red")
+			if currentFish.find_word_match(typingAgent.textDisplay.text):
+				print("word complete!")
+				typingAgent.clear_text_display()
+			
+			if currentFish.has_no_words():
+				currentFishingNode.remove_fish(currentFish)
+				player.return_to_fishing_camera(currentFishingNode)
+				currentFishingNode.start_luring()
+				typingAgent.clear_text_display()
+				currentState = LURE_STATE
 
 func _on_player_start_fishing(node : FishingNode) -> void:
 	currentState = LURE_STATE
+	currentFishingNode = node
+	currentFishingNode.start_luring()
+	
+func start_reel_state(fish : Fish) -> void:
+	currentState = REEL_STATE
+	currentFishingNode.stop_luring()
+	currentFish = fish
+	currentFish.start_reel_typing()
+	player.start_catching_camera(currentFish)

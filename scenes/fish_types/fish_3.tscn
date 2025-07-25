@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://2g6ajwpf8oo2"]
+
+[ext_resource type="ArrayMesh" uid="uid://dbi73jjq4xaxy" path="res://glb/fish3.res" id="2_d0tpx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rjk2b"]
+radius = 0.2
+height = 1.0
+
+[node name="FishCollider" type="CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_rjk2b")
+
+[node name="FishMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, -2.04281e-14, 0, 2.04281e-14, 0.3, 0, -0.151628, -6.62786e-09)
+mesh = ExtResource("2_d0tpx")
+skeleton = NodePath("")

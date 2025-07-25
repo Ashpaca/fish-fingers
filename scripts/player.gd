@@ -11,6 +11,8 @@ signal start_fishing(node : FishingNode)
 @onready var playerModel : Node3D = $Cat
 @onready var playerAnimator : AnimationPlayer = $Cat/AnimationPlayer
 @onready var cameraPivot : Node3D = $CameraPivot
+@onready var camera : Camera3D = $CameraPivot/CameraLocation/Camera3D
+@onready var cameraSightRay : RayCast3D = $CameraPivot/CameraLocation/LineOfSight
 
 var rotateLeft : bool = false
 var rotateRight : bool = false
@@ -41,6 +43,11 @@ func _physics_process(delta: float) -> void:
 			playerAnimator.call_deferred("pause")
 	
 	cameraPivot.position = cameraPivot.position.lerp(Vector3.ZERO, cameraLerpSpeed * delta)
+	var obj : Object = cameraSightRay.get_collider()
+	if obj and obj.name == "GridMap":
+		camera.global_position = cameraSightRay.get_collision_point()
+	else:
+		camera.position = Vector3.ZERO
 	
 	rotate_player_model(delta)
 	move_and_slide()
@@ -100,12 +107,17 @@ func _on_movement_zone_target_lost(location: TargetNodeText) -> void:
 	
 func start_fishing_camera(node : FishingNode) -> void:
 	lastSavedCameraRotation = cameraPivot.rotation
-	cameraPivot.rotation = node.cameraRotation
 	cameraPivot.reparent(node)
+	cameraPivot.rotation = node.cameraRotation
 	cameraLerpSpeed = LERP_TO_FISH_SPEED
 	for target in targetNodeList:
 		target.textBox.visible = false
-	
+
+
+func return_to_fishing_camera(node : FishingNode) -> void:
+	cameraPivot.reparent(node)
+	cameraPivot.rotation = node.cameraRotation
+	cameraLerpSpeed = LERP_TO_FISH_SPEED
 	
 func stop_fishing_camera() -> void:
 	cameraPivot.reparent(self)
@@ -113,3 +125,9 @@ func stop_fishing_camera() -> void:
 	cameraPivot.rotation = lastSavedCameraRotation
 	for target in targetNodeList:
 		target.textBox.visible = true
+
+
+func start_catching_camera(fish : Fish) -> void:
+	cameraPivot.reparent(fish)
+	cameraPivot.rotation = lastSavedCameraRotation
+	cameraPivot.rotate_y(PI)

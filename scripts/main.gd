@@ -140,4 +140,4 @@ func handle_caught_fish() -> void:
 	currentFishingNode.start_luring()
 	typingAgent.clear_text_display()
 	currentState = LURE_STATE
-	sfx_catch_fish.play()
+	sfx_catch_fish.play(0.4)

@@ -13,6 +13,7 @@ signal start_fishing(node : FishingNode)
 @onready var cameraPivot : Node3D = $CameraPivot
 @onready var camera : Camera3D = $CameraPivot/CameraLocation/Camera3D
 @onready var cameraSightRay : RayCast3D = $CameraPivot/CameraLocation/LineOfSight
+@onready var sfx_walking_grass: AudioStreamPlayer3D = $SFXWalkingGrass
 
 var rotateLeft : bool = false
 var rotateRight : bool = false
@@ -41,6 +42,7 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.y * Vector3.UP
 		if playerAnimator.current_animation == "cat walk":
 			playerAnimator.call_deferred("pause")
+			sfx_walking_grass.stop()
 	
 	cameraPivot.position = cameraPivot.position.lerp(Vector3.ZERO, cameraLerpSpeed * delta)
 	var obj : Object = cameraSightRay.get_collider()
@@ -86,6 +88,7 @@ func find_word_match(typedString : String) -> bool:
 			else:
 				navAgent.target_position = target.global_position
 				playerAnimator.play("cat walk")
+				sfx_walking_grass.play(randf_range(0.0, 1.0))
 			return true
 	return false
 

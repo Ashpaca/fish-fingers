@@ -1,21 +1,25 @@
 class_name  Fish extends CharacterBody3D
 
 signal QTE_ended(success : bool)
+signal fish_escaped
 
 const ALL_CHARACTERS : String = "qwertyuiopasdfghjklzxcvbnm"
-const ALL_WORDS : Array[String] = ["aardvark", "because", "college", "dog", "enough", "fish",
-								"goober", "hello", "illegal", "juice", "keeping", "llama", 
-								"mountain", "noun", "octopus"]
 const MIN_QTE_FRAME_COUNT : int = 4
 const MAX_QTE_FRAME_COUNT : int = 6
 const MAX_PATHING_ATTEMPTS : int = 10
-const MAX_PATHING_TIME : float = 5
+const MAX_PATHING_TIME : float = 5.0
+const REELING_IN_TIME : float = 1.0
+const TIME_TO_REEL_TIME : float = 2.0
+const FISH_ESCAPE_TIME : float = 4.0
 
 @onready var navAgent : NavigationAgent3D = $NavigationAgent3D
 @onready var fishModel : CollisionShape3D = $FishCollider
 @onready var lureLabel : Label3D = $FishCollider/LuringText
 @onready var bubbleQTE : AnimatedSprite3D = $FishCollider/LuringText/BubbleSprite
 @onready var reelLabel : Label3D = $FishCollider/ReelingText
+@onready var sfx_drop: AudioStreamPlayer3D = $SFXDrop
+@onready var sfx_wiggle: AudioStreamPlayer3D = $SFXWiggle
+
 var fishTypes : Array[String] = ["res://scenes/fish_types/fish_1.tscn", "res://scenes/fish_types/fish_2.tscn", "res://scenes/fish_types/fish_3.tscn"]
 
 var reeling : bool = false
@@ -23,7 +27,8 @@ var swimming : bool = true
 var rotationGoal : float = 0.0
 var swimHeight : float = 0.0
 var frameCountQTE : int = 0
-var pathingTimer : float = 0
+var pathingTimer : float = 0.0
+var reelingTimer : float = 0.0
 
 var words : Array[String] = ["", "", ""]
 
@@ -37,14 +42,24 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if reeling:
-		var direction : Vector3 = (navAgent.get_next_path_position() - global_position).normalized() # should probably run away, not towards the player
-		if (navAgent.get_final_position() - global_position).length_squared() > .5:
-			rotationGoal = atan2(direction.x, direction.z)
-			velocity = direction * 1.2
-			rotate_fish_model(delta)
-			move_and_slide()
+		reelingTimer += delta
+		if reelingTimer > FISH_ESCAPE_TIME:
+			fish_escaped.emit()
+			sfx_wiggle.stop()
+			return
+		if reelingTimer > TIME_TO_REEL_TIME:
+			rotate_y(6 * delta * (reelingTimer - floorf(reelingTimer) - .5))
+			if not sfx_wiggle.playing:
+				sfx_wiggle.play(3.0)
+			return
+		if reelingTimer < REELING_IN_TIME:
+			var direction : Vector3 = (navAgent.get_next_path_position() - global_position).normalized()
+			if (navAgent.get_final_position() - global_position).length_squared() > .5:
+				rotationGoal = atan2(direction.x, direction.z) - PI
+				velocity = direction * 1.2
+				rotate_fish_model(delta)
+				move_and_slide()
 		return
-	
 	if not swimming:
 		navAgent.target_position = global_position + Vector3.RIGHT * randf_range(-5, 5) + Vector3.FORWARD * randf_range(-5, 5)
 		var pathingAttempts : int = 0
@@ -98,15 +113,18 @@ func _on_bubble_sprite_animation_finished() -> void:
 func check_typed_letter(typedLetter : String) -> bool:
 	var success : bool = typedLetter == lureLabel.text and frameCountQTE >= MIN_QTE_FRAME_COUNT and frameCountQTE <= MAX_QTE_FRAME_COUNT
 	stop_lure_QTE(success)
+	if success:
+		sfx_drop.play()
 	return success
 
 
 func start_reel_typing(playerLocation : Vector3) -> void:
 	reeling = true
 	reelLabel.visible = true
+	reelingTimer = 0.0
 	if has_no_words():
 		for i in range(len(words)):
-			words[i] = ALL_WORDS.pick_random()
+			words[i] = Main.ALL_WORDS_LENGTH_5.pick_random()
 	update_reel_label()
 	navAgent.target_position = playerLocation
 	
@@ -129,6 +147,8 @@ func find_word_match(typedString : String) -> bool:
 		if words[i] == typedString:
 			words[i] = ""
 			update_reel_label()
+			reelingTimer = 0.0
+			sfx_wiggle.stop()
 			return true
 	return false
 

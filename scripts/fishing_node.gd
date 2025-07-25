@@ -3,6 +3,8 @@ class_name FishingNode extends TargetNodeText
 const WAIT_TIME_BETWEEN_BITES : float = 1
 const CHANCE_FOR_BITE : float = 0.2
 
+signal a_fish_escaped
+
 @export var cameraRotation : Vector3
 
 var allActiveFish : Array[Fish]
@@ -18,6 +20,7 @@ func _ready() -> void:
 			allActiveFish.append(child)
 	for fish in allActiveFish:
 		fish.connect("QTE_ended", on_fish_QTE_end)
+		fish.connect("fish_escaped", on_fish_escaped)
 
 
 func _physics_process(delta: float) -> void:
@@ -57,6 +60,10 @@ func handle_fish_biting(delta: float) -> void:
 func on_fish_QTE_end(success : bool) -> void:
 	if not success:
 		currentFishID = -1
+
+
+func on_fish_escaped() -> void:
+	a_fish_escaped.emit()
 
 
 func remove_fish(fish : Fish) -> void:

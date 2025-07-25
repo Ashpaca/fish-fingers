@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c0a0sschp6sx7"]
+[gd_scene load_steps=14 format=3 uid="uid://c0a0sschp6sx7"]
 
 [ext_resource type="MeshLibrary" uid="uid://uqj1jd7n201e" path="res://mesh_libraries/blocks_mesh_lib.tres" id="1_01dol"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_raokw"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://bxl5td38voos3" path="res://scenes/fishing_node.tscn" id="6_8vd74"]
 [ext_resource type="PackedScene" uid="uid://dscf8ceavduac" path="res://scenes/typing_agent.tscn" id="6_pnwdg"]
 [ext_resource type="PackedScene" uid="uid://2usj0bol3m53" path="res://scenes/fish_template.tscn" id="7_cjns0"]
+[ext_resource type="AudioStream" uid="uid://ssyrstubyqvy" path="res://sounds/wind_amb.wav" id="8_4a68n"]
+[ext_resource type="AudioStream" uid="uid://chy6u1hrsoxl3" path="res://sounds/Splash.wav by daveincamas -- httpsfreesound.orgs59104 -- License Attribution 4.0.wav" id="9_bwi6h"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_63maw"]
 vertices = PackedVector3Array(-6.25, 2, -0.5, -4.5, 2, -0.5, -3.25, 2, -1.25, -9.5, 2, -9.25, -8.25, 2, -9.5, -8.25, 2, -12.5, -12.5, 2, -12.5, -12.5, 2, -9.25, -3.25, 2, -4.5, -7.25, 2, -8, -7.75, 2, -7.25, -12.5, 2, 0.5, -6.5, 2, 0.5, -9.5, 2, -7.5, -12.5, 2, -6, -12.5, 2, -2.75, -7.25, 2, -9.25, -4.75, 2, -12.5, -1, 2, -12.5, 1.5, 2, -4.5, 2.5, 2, -12.5, 6.25, 2, -4.5, 6.25, 2, -12.5, 12.5, 2, -7.75, 12.5, 2, -12.5, 9.25, 2, -12.5, 6.75, 2, -4.25, 6.75, 2, -2.75, 12.5, 2, -3, -2.5, 3, -3.5, -2.5, 3, -2.5, 1, 3, -2.5, 1, 3, -3.5, 4.5, 3, -3.5, 4.5, 3, -2.5, 6.75, 2, 2.75, 12.5, 2, 3, 12.5, 2, 0, 6.75, 2, 0, -3.25, 2, 4.5, -3, 2, 3.75, -3.5, 2, 3.5, -4.25, 2, 1.25, -3.25, 2, 1.5, -1.5, 2, 1.5, 0.5, 2, -1.25, -1.25, 2, 3, 2.5, 2, 3.25, 2.75, 2, 2.5, 4.5, 2, 2.5, 4.5, 2, -1.25, -4.75, 2, 1.75, -6.25, 2, 1.75, -7.75, 2, 6.5, -7.25, 2, 7, -6.5, 2, 1.25, -12.5, 2, 7, -9.5, 2, 7, -9.25, 2, 6.5, -12.5, 2, 3.75, 8.25, 2, 10.75, 12.5, 2, 10.75, 12.5, 2, 6.75, 6.75, 2, 4.25, 6.25, 2, 4.75, 4.25, 2, 4.75, 4.25, 2, 10.5, -1.75, 2, 3.75, 2.75, 2, 4.75, -3, 2, 10.5, 0.5, 2, 10.5, -9.25, 2, 8.75, -12.5, 2, 10.5, -7.25, 2, 8.25, -7.75, 2, 10.5, -7.75, 2, 8.75, 6.75, 0, 11.75, 6.75, 0, 16.5, 9.5, 0, 16.5, 9.5, 0, 11.75, 12.5, 0, 16.5, 12.5, 0, 11.75)
@@ -51,7 +53,7 @@ metadata/_editor_floor_ = Vector3(0, 2, 0)
 environment = SubResource("Environment_q0lyi")
 
 [node name="Player" parent="." instance=ExtResource("2_hw2p6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.74586, 2.30056, 8.77339)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.38428, 2.30056, -0.5912)
 
 [node name="MovementMap" type="GridMap" parent="."]
 visible = false
@@ -77,5 +79,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.856, -1.884, 0.039)
 [node name="Fish3" parent="FishingNode" instance=ExtResource("7_cjns0")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.88444, 2.75146)
 
+[node name="Music" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("8_4a68n")
+autoplay = true
+
+[node name="SFXCatchFish" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("9_bwi6h")
+
 [connection signal="start_fishing" from="Player" to="." method="_on_player_start_fishing"]
 [connection signal="letter_typed" from="TypingAgent" to="." method="_on_typing_agent_letter_typed"]
+[connection signal="a_fish_escaped" from="FishingNode" to="." method="_on_fishing_node_a_fish_escaped"]

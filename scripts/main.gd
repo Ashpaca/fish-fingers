@@ -1,4 +1,4 @@
-extends Node3D
+class_name Main extends Node3D
 
 const ALL_CHARACTERS : String = "qwertyuiopasdfghjklzxcvbnm"
 const MOVE_TEXT_LENGTH : int = 3
@@ -6,9 +6,16 @@ const MOVE_STATE : int = 1
 const LURE_STATE : int = 2
 const REEL_STATE : int = 3
 
+static var ALL_WORDS_LENGTH_3 : Array[String]
+static var ALL_WORDS_LENGTH_4 : Array[String]
+static var ALL_WORDS_LENGTH_5 : Array[String]
+static var ALL_WORDS_LENGTH_6 : Array[String]
+static var ALL_WORDS_LENGTH_7 : Array[String]
+
 @onready var player : Player = $Player
 @onready var targetNodes : GridMap = $MovementMap
 @onready var typingAgent : TypingAgent = $TypingAgent
+@onready var sfx_catch_fish: AudioStreamPlayer3D = $SFXCatchFish
 
 var targetNodeTextScene : PackedScene = load("res://scenes/target_node_text.tscn")
 var targetNodePositions : Array[Vector3]
@@ -24,8 +31,24 @@ func _ready() -> void:
 		targetNodePositions.append(nodeLocation)
 		
 	call_deferred("add_text_nodes")
-		
-	
+	setup_all_words()
+
+func setup_all_words():
+	var allWordsFile : FileAccess = FileAccess.open("res://word_lists/enable1.txt", FileAccess.READ)
+	while not allWordsFile.eof_reached():
+		var line : String = allWordsFile.get_line()
+		match len(line):
+			3:
+				ALL_WORDS_LENGTH_3.append(line)
+			4:
+				ALL_WORDS_LENGTH_4.append(line)
+			5:
+				ALL_WORDS_LENGTH_5.append(line)
+			6:
+				ALL_WORDS_LENGTH_6.append(line)
+			7:
+				ALL_WORDS_LENGTH_7.append(line)
+
 
 func add_text_nodes():
 	for i in range(len(targetNodePositions)):
@@ -34,15 +57,13 @@ func add_text_nodes():
 		targetNodesTextList.append(targetNodeTextInstance)
 		targetNodeTextInstance.global_position = targetNodePositions[i]
 		var label : Label3D = targetNodeTextInstance.textBox
-		var usedStartingLetters : String = ""
+		var usedWords : Array[String]
 		for j in range(i - 1, -1, -1):
-			if (targetNodesTextList[j].global_position - targetNodeTextInstance.global_position).length_squared() < 100: # should be 144, but that might be impossible not to get any doubles
-				usedStartingLetters += targetNodesTextList[j].textBox.text[0]
-		label.text = ALL_CHARACTERS[randi_range(0, ALL_CHARACTERS.length() - 1)]
-		while label.text[0] in usedStartingLetters and len(usedStartingLetters) < len(ALL_CHARACTERS):
-			label.text = ALL_CHARACTERS[randi_range(0, ALL_CHARACTERS.length() - 1)]
-		for _x in range(MOVE_TEXT_LENGTH - 1):
-			label.text += ALL_CHARACTERS[randi_range(0, ALL_CHARACTERS.length() - 1)]
+			if (targetNodesTextList[j].global_position - targetNodeTextInstance.global_position).length_squared() < 144:
+				usedWords.append(targetNodesTextList[j].textBox.text)
+		label.text = ALL_WORDS_LENGTH_3[randi_range(0, len(ALL_WORDS_LENGTH_3) - 1)]
+		while label.text in usedWords:
+			label.text = ALL_WORDS_LENGTH_3[randi_range(0, len(ALL_WORDS_LENGTH_3) - 1)]
 
 
 
@@ -75,11 +96,7 @@ func _on_typing_agent_letter_typed() -> void:
 		
 		REEL_STATE:
 			if Input.is_action_just_pressed("menu_exit"):
-				player.return_to_fishing_camera(currentFishingNode)
-				currentFishingNode.start_luring()
-				currentFish.cancel_reel_typing()
-				typingAgent.clear_text_display()
-				currentState = LURE_STATE
+				cancel_reel_state()
 				
 			if len(typingAgent.textDisplay.text) < 1:
 				return
@@ -91,11 +108,7 @@ func _on_typing_agent_letter_typed() -> void:
 				typingAgent.clear_text_display()
 			
 			if currentFish.has_no_words():
-				currentFishingNode.remove_fish(currentFish)
-				player.return_to_fishing_camera(currentFishingNode)
-				currentFishingNode.start_luring()
-				typingAgent.clear_text_display()
-				currentState = LURE_STATE
+				handle_caught_fish()
 
 func _on_player_start_fishing(node : FishingNode) -> void:
 	currentState = LURE_STATE
@@ -108,3 +121,23 @@ func start_reel_state(fish : Fish) -> void:
 	currentFish = fish
 	currentFish.start_reel_typing(player.global_position)
 	player.start_catching_camera(currentFish)
+
+
+func cancel_reel_state() -> void:
+	player.return_to_fishing_camera(currentFishingNode)
+	currentFishingNode.start_luring()
+	currentFish.cancel_reel_typing()
+	typingAgent.clear_text_display()
+	currentState = LURE_STATE
+
+func _on_fishing_node_a_fish_escaped() -> void:
+	cancel_reel_state()
+
+
+func handle_caught_fish() -> void:
+	currentFishingNode.remove_fish(currentFish)
+	player.return_to_fishing_camera(currentFishingNode)
+	currentFishingNode.start_luring()
+	typingAgent.clear_text_display()
+	currentState = LURE_STATE
+	sfx_catch_fish.play()

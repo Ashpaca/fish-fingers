@@ -1,8 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://2usj0bol3m53"]
+[gd_scene load_steps=16 format=3 uid="uid://2usj0bol3m53"]
 
 [ext_resource type="Script" path="res://scripts/fish.gd" id="1_w2oih"]
 [ext_resource type="Texture2D" uid="uid://gsybvggnne60" path="res://bubble_pop.png" id="3_h4t4r"]
 [ext_resource type="PackedScene" uid="uid://d14a5xijaxh0a" path="res://scenes/fish_types/fish_1.tscn" id="3_lstq2"]
+[ext_resource type="AudioStream" uid="uid://cv2j7drps4apc" path="res://sounds/Dropping tiny pebble in still water surface by jorickhoofd -- httpsfreesound.orgs160119 -- License Attribution 4.0.wav" id="4_lw8p6"]
+[ext_resource type="AudioStream" uid="uid://gu3yqhhjlthl" path="res://sounds/fish_splashing.wav" id="5_xicmx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sk6t4"]
 atlas = ExtResource("3_h4t4r")
@@ -112,6 +114,14 @@ big
 words"
 font_size = 64
 outline_size = 32
+
+[node name="SFXDrop" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_lw8p6")
+
+[node name="SFXWiggle" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_xicmx")
+volume_db = -10.0
+pitch_scale = 0.24
 
 [connection signal="animation_finished" from="FishCollider/LuringText/BubbleSprite" to="." method="_on_bubble_sprite_animation_finished"]
 [connection signal="frame_changed" from="FishCollider/LuringText/BubbleSprite" to="." method="_on_bubble_sprite_frame_changed"]

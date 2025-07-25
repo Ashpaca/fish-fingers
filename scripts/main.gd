@@ -88,7 +88,6 @@ func _on_typing_agent_letter_typed() -> void:
 			else:
 				typingAgent.set_text_color("red")
 			if currentFish.find_word_match(typingAgent.textDisplay.text):
-				print("word complete!")
 				typingAgent.clear_text_display()
 			
 			if currentFish.has_no_words():
@@ -107,5 +106,5 @@ func start_reel_state(fish : Fish) -> void:
 	currentState = REEL_STATE
 	currentFishingNode.stop_luring()
 	currentFish = fish
-	currentFish.start_reel_typing()
+	currentFish.start_reel_typing(player.global_position)
 	player.start_catching_camera(currentFish)

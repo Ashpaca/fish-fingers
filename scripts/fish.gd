@@ -37,7 +37,12 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if reeling:
-		#maybe start moving away from player. Typing a word correctly pulls them back?
+		var direction : Vector3 = (navAgent.get_next_path_position() - global_position).normalized() # should probably run away, not towards the player
+		if (navAgent.get_final_position() - global_position).length_squared() > .5:
+			rotationGoal = atan2(direction.x, direction.z)
+			velocity = direction * 1.2
+			rotate_fish_model(delta)
+			move_and_slide()
 		return
 	
 	if not swimming:
@@ -96,13 +101,14 @@ func check_typed_letter(typedLetter : String) -> bool:
 	return success
 
 
-func start_reel_typing() -> void:
+func start_reel_typing(playerLocation : Vector3) -> void:
 	reeling = true
 	reelLabel.visible = true
 	if has_no_words():
 		for i in range(len(words)):
 			words[i] = ALL_WORDS.pick_random()
 	update_reel_label()
+	navAgent.target_position = playerLocation
 	
 
 func cancel_reel_typing() -> void:

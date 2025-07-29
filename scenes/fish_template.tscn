@@ -2,10 +2,11 @@
 
 [ext_resource type="Script" path="res://scripts/fish.gd" id="1_w2oih"]
 [ext_resource type="Texture2D" uid="uid://gsybvggnne60" path="res://bubble_pop.png" id="3_h4t4r"]
-[ext_resource type="PackedScene" uid="uid://d14a5xijaxh0a" path="res://scenes/fish_types/fish_1.tscn" id="3_lstq2"]
 [ext_resource type="AudioStream" uid="uid://cv2j7drps4apc" path="res://sounds/Dropping tiny pebble in still water surface by jorickhoofd -- httpsfreesound.orgs160119 -- License Attribution 4.0.wav" id="4_lw8p6"]
 [ext_resource type="PackedScene" uid="uid://dbmhkjqph6px6" path="res://scenes/rich_label_3d.tscn" id="4_x1nm0"]
 [ext_resource type="AudioStream" uid="uid://gu3yqhhjlthl" path="res://sounds/fish_splashing.wav" id="5_xicmx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_eqqbg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sk6t4"]
 atlas = ExtResource("3_h4t4r")
@@ -89,10 +90,12 @@ script = ExtResource("1_w2oih")
 path_postprocessing = 1
 avoidance_enabled = true
 
-[node name="FishCollider" parent="." instance=ExtResource("3_lstq2")]
+[node name="FishCollider" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_eqqbg")
 
 [node name="LuringText" type="Label3D" parent="FishCollider"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -1.77636e-14, 0.2625)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.2625, -1.14742e-08)
 visible = false
 billboard = 1
 no_depth_test = true
@@ -111,8 +114,12 @@ sprite_frames = SubResource("SpriteFrames_qgmou")
 animation = &"QTE"
 
 [node name="ReelingText" parent="FishCollider" instance=ExtResource("4_x1nm0")]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 texture = SubResource("ViewportTexture_c0ggv")
 labelHeight = 300
+
+[node name="CameraAttachPoint" type="Node3D" parent="FishCollider"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 
 [node name="SFXDrop" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_lw8p6")

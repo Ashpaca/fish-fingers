@@ -2,7 +2,7 @@ class_name Player extends CharacterBody3D
 
 const SPEED = 2.5
 const ROTATE_SPEED = 0.03
-const LERP_TO_FISH_SPEED : float = 1
+const LERP_TO_FISH_SPEED : float = 3
 const LERP_TO_MOVE_SPEED : float = 5
 
 signal start_fishing(node : FishingNode)
@@ -14,6 +14,8 @@ signal start_fishing(node : FishingNode)
 @onready var camera : Camera3D = $CameraPivot/CameraLocation/Camera3D
 @onready var cameraSightRay : RayCast3D = $CameraPivot/CameraLocation/LineOfSight
 @onready var sfx_walking_grass: AudioStreamPlayer3D = $SFXWalkingGrass
+@onready var fishingRod : Node3D = $Cat/FishingRod
+@onready var fishingRodString : Node3D = $Cat/FishingRod/StringStartPoint/String
 
 var rotateLeft : bool = false
 var rotateRight : bool = false
@@ -21,6 +23,7 @@ var rotationGoal : float = 0.0
 var lastSavedCameraRotation : Vector3 = Vector3.ZERO
 var cameraLerpSpeed : float = LERP_TO_FISH_SPEED
 var targetNodeList : Array[TargetNodeText]
+var fishBeingCaught : Fish = null
 
 func _ready() -> void:
 	navAgent.target_position = global_position
@@ -51,8 +54,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		camera.position = Vector3.ZERO
 	
+	if fishBeingCaught:
+		drawing_string()
+	
 	rotate_player_model(delta)
 	move_and_slide()
+	
 	
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("rotate_left"):
@@ -62,6 +69,13 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released("rotate_left") or event.is_action_released("rotate_right"):
 		rotateLeft = false
 		rotateRight = false
+
+
+func stop_walking_early() -> void:
+	navAgent.target_position = global_position
+	playerAnimator.play("cat lazy idle")
+	sfx_walking_grass.stop()
+
 
 func move_to_location():
 	var direction : Vector3 = (navAgent.get_next_path_position() - global_position).normalized()
@@ -90,6 +104,7 @@ func find_word_match(typedString : String) -> bool:
 				start_fishing.emit(target)
 				start_fishing_camera(target)
 				playerAnimator.play("cat lazy idle")
+				sfx_walking_grass.stop()
 			else:
 				navAgent.target_position = target.global_position
 				playerAnimator.play("cat walk")
@@ -120,12 +135,14 @@ func start_fishing_camera(node : FishingNode) -> void:
 	cameraLerpSpeed = LERP_TO_FISH_SPEED
 	for target in targetNodeList:
 		target.textBox.visible = false
+	show_rod(true)
 
 
 func return_to_fishing_camera(node : FishingNode) -> void:
 	cameraPivot.reparent(node)
 	cameraPivot.rotation = node.cameraRotation
 	cameraLerpSpeed = LERP_TO_FISH_SPEED
+	stop_drawing_string_to_fish()
 	
 func stop_fishing_camera() -> void:
 	cameraPivot.reparent(self)
@@ -133,9 +150,32 @@ func stop_fishing_camera() -> void:
 	cameraPivot.rotation = lastSavedCameraRotation
 	for target in targetNodeList:
 		target.textBox.visible = true
-
+	show_rod(false)
 
 func start_catching_camera(fish : Fish) -> void:
-	cameraPivot.reparent(fish)
+	cameraPivot.reparent(fish.cameraAttachPoint)
 	cameraPivot.rotation = lastSavedCameraRotation
 	cameraPivot.rotate_y(PI)
+	start_drawing_string_to_fish(fish)
+
+
+func show_rod(showHide : bool) -> void:
+	fishingRod.visible = showHide
+
+
+func start_drawing_string_to_fish(fish : Fish):
+	fishBeingCaught = fish
+	fishingRodString.visible = true
+
+
+func drawing_string() -> void:
+	var stringMesh : CylinderMesh = fishingRodString.get_child(0).mesh
+	var fishMeshLocation : Vector3 = fishBeingCaught.fishModel.global_position
+	stringMesh.height = (fishingRodString.get_parent_node_3d().global_position - fishMeshLocation).length() * 2
+	fishingRodString.look_at(fishMeshLocation)
+	fishingRodString.global_position = (fishingRodString.get_parent_node_3d().global_position + fishMeshLocation) / 2
+
+
+func stop_drawing_string_to_fish() -> void:
+	fishBeingCaught = null
+	fishingRodString.visible = false

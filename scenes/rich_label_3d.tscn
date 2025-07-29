@@ -29,4 +29,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 bbcode_enabled = true
-text = "[center][outline_size=32][font_size=64][color=gray]h[/color][color=gray]i[/color][/font_size][/outline_size][/center]"

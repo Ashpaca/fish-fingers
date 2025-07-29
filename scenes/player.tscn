@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://ba532rw631gcg"]
+[gd_scene load_steps=10 format=3 uid="uid://ba532rw631gcg"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_tp5iu"]
 [ext_resource type="Script" path="res://scripts/active_node_zone.gd" id="2_kflwm"]
 [ext_resource type="PackedScene" uid="uid://bdcahagjwmn0x" path="res://glb/Cat.glb" id="3_7fl0h"]
+[ext_resource type="PackedScene" uid="uid://bpoy27wpmw0iw" path="res://scenes/fishing_rod.tscn" id="4_7f40y"]
 [ext_resource type="AudioStream" uid="uid://cx1y22q6lbes" path="res://sounds/grass_step.wav" id="4_gjeyf"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_2sn5x"]
@@ -11,6 +12,11 @@
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_cu5i3"]
 radius = 7.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_n5ux2"]
+top_radius = 0.01
+bottom_radius = 0.01
+radial_segments = 6
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_tp5iu")
@@ -44,6 +50,21 @@ light_color = Color(0.946643, 0.94213, 7.70092e-07, 1)
 shadow_enabled = true
 distance_fade_enabled = true
 spot_range = 12.473
+
+[node name="FishingRod" parent="Cat" instance=ExtResource("4_7f40y")]
+transform = Transform3D(-0.157253, -0.957105, -2.30417, 0.187139, 2.29772, -0.967196, 2.48802, -0.233318, -0.0728849, -2.89647, 5.67052, 5.74457)
+visible = false
+
+[node name="StringStartPoint" type="Node3D" parent="Cat/FishingRod"]
+transform = Transform3D(1, 0, 7.45058e-09, 2.98023e-08, 1, -4.81959e-08, -1.11759e-08, 1.97906e-08, 1, 1.3069, 2.19146, 0.0014649)
+
+[node name="String" type="Node3D" parent="Cat/FishingRod/StringStartPoint"]
+visible = false
+
+[node name="StringMesh" type="MeshInstance3D" parent="Cat/FishingRod/StringStartPoint/String"]
+transform = Transform3D(0.999999, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_n5ux2")
+skeleton = NodePath("../..")
 
 [node name="CameraPivot" type="Node3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)

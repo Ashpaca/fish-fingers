@@ -69,6 +69,8 @@ func add_text_nodes():
 func _on_typing_agent_letter_typed() -> void:
 	match currentState:
 		MOVE_STATE:
+			if Input.is_action_just_pressed("menu_exit"):
+				player.stop_walking_early()
 			typingAgent.set_matching_letters(player.find_partial_match(typingAgent.get_text()))
 			if player.find_word_match(typingAgent.get_text()):
 				typingAgent.clear_text_display()
@@ -125,8 +127,5 @@ func _on_fishing_node_a_fish_escaped() -> void:
 
 
 func handle_caught_fish() -> void:
+	cancel_reel_state()
 	currentFishingNode.catch_and_remove_fish(currentFish)
-	player.return_to_fishing_camera(currentFishingNode)
-	currentFishingNode.start_luring()
-	typingAgent.clear_text_display()
-	currentState = LURE_STATE

@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://bpoy27wpmw0iw"]
+
+[ext_resource type="PackedScene" uid="uid://bbuh2q46l71r6" path="res://glb/_Fishing Rod_ (https___skfb.ly_6ZGDQ) by Cxrly97 is licensed under Creative Commons Attribution (http___creativecommons.org_licenses_by_4.0_).glb" id="1_8wc6b"]
+
+[node name="FishingRod" instance=ExtResource("1_8wc6b")]

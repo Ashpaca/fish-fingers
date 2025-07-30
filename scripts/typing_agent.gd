@@ -24,7 +24,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	setup_text()
 
-
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.is_pressed():
 		if event.keycode >= A and event.keycode <= Z:

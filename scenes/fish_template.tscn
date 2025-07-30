@@ -114,9 +114,9 @@ sprite_frames = SubResource("SpriteFrames_qgmou")
 animation = &"QTE"
 
 [node name="ReelingText" parent="FishCollider" instance=ExtResource("4_x1nm0")]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -0.5)
 texture = SubResource("ViewportTexture_c0ggv")
-labelHeight = 300
+labelHeight = 500
 
 [node name="CameraAttachPoint" type="Node3D" parent="FishCollider"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)

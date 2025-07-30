@@ -24,13 +24,13 @@ func setup_text() -> void:
 	
 	for i in range(len(text)):
 		if i < startingLettersSkipped:
-			displayedMessage += "[color=gray]" + text[i] + "[/color]"
+			displayedMessage += "[color=web_gray]" + text[i] + "[/color]"
 		elif i < numberOfMatchingLetters + startingLettersSkipped:
 			displayedMessage += "[color=white]" + text[i] + "[/color]"
 		elif i < totalTypedLetters + startingLettersSkipped:
 			displayedMessage += "[color=red]" + text[i] + "[/color]"
 		else:
-			displayedMessage += "[color=gray]" + text[i] + "[/color]"
+			displayedMessage += "[color=web_gray]" + text[i] + "[/color]"
 	
 	displayedMessage +=   "[/font_size]" + "[/outline_size]" + "[/center]"
 	

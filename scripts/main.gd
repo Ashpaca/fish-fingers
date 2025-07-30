@@ -93,8 +93,8 @@ func _on_typing_agent_letter_typed() -> void:
 			if Input.is_action_just_pressed("menu_exit"):
 				cancel_reel_state()
 				
-			if len(typingAgent.get_text()) < 1:
-				return
+			#if len(typingAgent.get_text()) < 1:
+			#	return
 			typingAgent.set_matching_letters(currentFish.find_partial_match(typingAgent.get_text()))
 			if currentFish.find_word_match(typingAgent.get_text()):
 				typingAgent.clear_text_display()

@@ -15,6 +15,7 @@ REELING_IN_TIME = 3.0
 FISH_ESCAPE_TIME = 5.0
 HOME_RADIUS = 5.0
 TIME_TO_LEAVE = 15.0
+WORD_LENGTHS = Array[int]([6, 5])
 
 [node name="FishMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, -2.04281e-14, 0, 2.04281e-14, 0.3, 0, 0, 0)

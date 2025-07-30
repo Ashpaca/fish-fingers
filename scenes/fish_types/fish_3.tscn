@@ -14,7 +14,8 @@ script = ExtResource("1_jk1eh")
 REELING_IN_TIME = 4.0
 FISH_ESCAPE_TIME = 4.0
 HOME_RADIUS = 4.0
-TIME_TO_LEAVE = 8.0
+TIME_TO_LEAVE = 30.0
+WORD_LENGTHS = Array[int]([5, 4, 4, 4])
 
 [node name="FishMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, -2.04281e-14, 0, 2.04281e-14, 0.3, 0, -0.151628, -6.62786e-09)

@@ -15,6 +15,10 @@ static var ALL_WORDS_LENGTH_7 : Array[String]
 @onready var player : Player = $Player
 @onready var targetNodes : GridMap = $MovementMap
 @onready var typingAgent : TypingAgent = $TypingAgent
+@onready var screenEffects: ScreenEffects = $ScreenEffects
+@onready var fishingSpots: Node3D = $FishingSpots
+@onready var inventory: Inventory = $Inventory
+
 
 var targetNodeTextScene : PackedScene = load("res://scenes/target_node_text.tscn")
 var targetNodePositions : Array[Vector3]
@@ -28,9 +32,21 @@ func _ready() -> void:
 	for cell in targetNodes.get_used_cells():
 		var nodeLocation : Vector3 = Vector3(cell.x + 0.5, cell.y + 0.5, cell.z + 0.5)
 		targetNodePositions.append(nodeLocation)
-		
+	
+	for node in fishingSpots.get_children():
+		if node is FishingNode:
+			node.connect("a_fish_escaped", _on_fishing_node_a_fish_escaped)
+			node.connect("QTE_started", _on_fishing_node_QTE_started)
+			node.connect("QTE_ended", _on_fishing_node_QTE_ended)
+	
 	call_deferred("add_text_nodes")
 	setup_all_words()
+
+
+func _process(delta: float) -> void:
+	if currentState == LURE_STATE and currentFishingNode:
+		pass
+
 
 func setup_all_words():
 	var allWordsFile : FileAccess = FileAccess.open("res://word_lists/enable1.txt", FileAccess.READ)
@@ -76,7 +92,6 @@ func _on_typing_agent_letter_typed() -> void:
 				typingAgent.clear_text_display()
 		
 		LURE_STATE:
-			print(typingAgent.get_text())
 			if Input.is_action_just_pressed("menu_exit"):
 				player.stop_fishing_camera()
 				typingAgent.clear_text_display()
@@ -127,6 +142,15 @@ func _on_fishing_node_a_fish_escaped() -> void:
 	cancel_reel_state()
 
 
+func _on_fishing_node_QTE_started(fishLabel : Label3D) -> void:
+	screenEffects.start_QTE_effects(fishLabel, player.camera)
+
+
+func _on_fishing_node_QTE_ended() -> void:
+	screenEffects.end_QTE_effects()
+
+
 func handle_caught_fish() -> void:
 	cancel_reel_state()
+	inventory.add_fish(currentFish.FISH_TYPE)
 	currentFishingNode.catch_and_remove_fish(currentFish)

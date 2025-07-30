@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://8hpu6qw4hhwn"]
+
+[ext_resource type="Script" path="res://scenes/screen_effects.gd" id="1_x3qxa"]
+[ext_resource type="Texture2D" uid="uid://b8q17l3bxhugu" path="res://QTE_screen_effect.png" id="2_334kk"]
+
+[node name="ScreenEffects" type="Node2D"]
+script = ExtResource("1_x3qxa")
+
+[node name="QTE_SlowRing" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0, 0.32549, 0.701961, 1)
+position = Vector2(640, 480)
+texture = ExtResource("2_334kk")
+
+[node name="QTE_FastRing" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.523632, 1, 0.996451, 1)
+position = Vector2(640, 480)
+texture = ExtResource("2_334kk")

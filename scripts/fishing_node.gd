@@ -1,9 +1,11 @@
 class_name FishingNode extends TargetNodeText
 
 const WAIT_TIME_BETWEEN_BITES : float = 1
-const CHANCE_FOR_BITE : float = 1#0.2
+const CHANCE_FOR_BITE : float = 0.2
 
 signal a_fish_escaped
+signal QTE_started(fishLabel : Label3D)
+signal QTE_ended
 
 @export var cameraRotation : Vector3
 @export var waterDepth : float
@@ -17,6 +19,7 @@ signal a_fish_escaped
 
 var fishTemplateScene : PackedScene = load("res://scenes/fish_template.tscn")
 var allActiveFish : Array[Fish]
+var fishInRange : Array[Fish]
 var isLuring : bool = false
 var biteTimer : float = 0.0
 var currentFishID : int = -1
@@ -81,18 +84,21 @@ func handle_fish_biting(delta: float) -> void:
 	if biteTimer < WAIT_TIME_BETWEEN_BITES:
 		return
 	biteTimer = 0
-	if randf() > CHANCE_FOR_BITE:
+	if randf() > CHANCE_FOR_BITE or len(fishInRange) < 1:
 		return
-	currentFishID = randi_range(0, len(allActiveFish) - 1)
+	currentFishID = allActiveFish.find(fishInRange.pick_random())
 	allActiveFish[currentFishID].start_lure_QTE()
+	QTE_started.emit(allActiveFish[currentFishID].lureLabel)
 
 
 func on_fish_QTE_end(success : bool) -> void:
 	if not success:
 		currentFishID = -1
+	QTE_ended.emit()
 
 
 func on_fish_escaped() -> void:
+	currentFishID = -1
 	a_fish_escaped.emit()
 
 
@@ -105,3 +111,13 @@ func catch_and_remove_fish(fish : Fish) -> void:
 func remove_fish(fish : Fish) -> void:
 	allActiveFish.erase(fish)
 	fish.queue_free()
+
+
+func _on_biting_zone_body_entered(body: Node3D) -> void:
+	if body is Fish:
+		fishInRange.append(body)
+
+
+func _on_biting_zone_body_exited(body: Node3D) -> void:
+	if body is Fish:
+		fishInRange.erase(body)

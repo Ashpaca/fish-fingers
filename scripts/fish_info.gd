@@ -1,5 +1,6 @@
 class_name FishInfo extends CollisionShape3D
 
+@export var FISH_TYPE : String
 @export var REELING_IN_TIME : float   
 @export var FISH_ESCAPE_TIME : float
 @export var HOME_RADIUS : float

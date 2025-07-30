@@ -19,6 +19,7 @@ var fishModel : FishInfo = null
 @onready var cameraAttachPoint: Node3D = $FishCollider/CameraAttachPoint
 
 # not consts as they are set by the fish type, but they act like consts in this script
+var FISH_TYPE : String = "default"
 var REELING_IN_TIME : float = 2.0    
 var FISH_ESCAPE_TIME : float = 4.0
 var HOME_LOCATION : Vector3 = Vector3.ZERO
@@ -133,6 +134,7 @@ func setup_fish(info : FishInfo, homeLoc : Vector3, despawnLoc : Vector3) -> voi
 		child.reparent(info)
 	tempFishModel.queue_free()
 	fishModel = info
+	FISH_TYPE = info.FISH_TYPE
 	REELING_IN_TIME = info.REELING_IN_TIME
 	FISH_ESCAPE_TIME = info.FISH_ESCAPE_TIME
 	HOME_RADIUS = info.HOME_RADIUS

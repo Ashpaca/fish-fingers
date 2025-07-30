@@ -76,6 +76,7 @@ func _on_typing_agent_letter_typed() -> void:
 				typingAgent.clear_text_display()
 		
 		LURE_STATE:
+			print(typingAgent.get_text())
 			if Input.is_action_just_pressed("menu_exit"):
 				player.stop_fishing_camera()
 				typingAgent.clear_text_display()

@@ -1,7 +1,7 @@
 class_name FishingNode extends TargetNodeText
 
 const WAIT_TIME_BETWEEN_BITES : float = 1
-const CHANCE_FOR_BITE : float = 0.2
+const CHANCE_FOR_BITE : float = 1#0.2
 
 signal a_fish_escaped
 
@@ -60,6 +60,7 @@ func _physics_process(delta: float) -> void:
 func start_luring() -> void:
 	isLuring = true
 	biteTimer = 0
+	currentFishID = -1
 	
 func stop_luring() -> void:
 	isLuring = false
@@ -97,6 +98,7 @@ func on_fish_escaped() -> void:
 
 func catch_and_remove_fish(fish : Fish) -> void:
 	sfx_catch_fish.play(0.4)
+	currentFishID = -1
 	remove_fish(fish)
 
 

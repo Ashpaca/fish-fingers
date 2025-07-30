@@ -162,6 +162,7 @@ func start_lure_QTE() -> void:
 func stop_lure_QTE(success : bool) -> void:
 	lureLabel.visible = false
 	swimming = false
+	bubbleQTE.stop()
 	QTE_ended.emit(success)
 
 
@@ -226,7 +227,7 @@ func find_partial_match(typedString : String) -> int:
 
 func find_word_match(typedString : String) -> bool:
 	for i in range(len(words)):
-		if words[i] == typedString:
+		if words[i] != "" and words[i] == typedString:
 			words[i] = ""
 			update_reel_label()
 			reelingTimer = 0.0

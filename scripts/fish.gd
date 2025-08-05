@@ -10,7 +10,7 @@ const MAX_PATHING_ATTEMPTS : int = 20
 const MAX_PATHING_TIME : float = 5.0
 
 @onready var navAgent : NavigationAgent3D = $NavigationAgent3D
-var fishModel : FishInfo = null
+var fishModel : FishInfo = null  # in the future this should be done with resources
 @onready var lureLabel : Label3D = $FishCollider/LuringText
 @onready var bubbleQTE : AnimatedSprite3D = $FishCollider/LuringText/BubbleSprite
 @onready var reelLabel : RichLabel3D = $FishCollider/ReelingText
